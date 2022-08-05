@@ -1,0 +1,20 @@
+{
+  "name": "utilities_cuenti",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "adm-zip": "^0.5.9",
+    "child_process": "^1.0.2",
+    "fs": "0.0.1-security",
+    "shellsync": "^0.2.2",
+    "uuid": "^8.3.2",
+    "zlib": "^1.0.5"
+  }
+}
