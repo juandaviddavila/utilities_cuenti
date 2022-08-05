@@ -185,6 +185,6 @@ var readFile = async function (file) {
 
 };
 module.exports = {
-    sleep,sleep, fileExistsDiretorio, fileExistsFile, ziptoXmlPdf, compressGzip, compressPdf,
+    sleep2,sleep, fileExistsDiretorio, fileExistsFile, ziptoXmlPdf, compressGzip, compressPdf,
     fileToBase64, stringToBase64, base64ToFile, fileExistsDiretorio, fileExistsFile, readFile, getPach, base64String
 };
