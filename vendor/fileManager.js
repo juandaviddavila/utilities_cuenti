@@ -20,6 +20,11 @@ function sleep4(ms) {
         setTimeout(resolve, ms);
     });
 };
+function sleep5(ms) {
+    return new Promise((resolve) => {
+        setTimeout(resolve, ms);
+    });
+};
 function sleep(ms) {
     return new Promise((resolve) => {
         setTimeout(resolve, ms);
@@ -195,6 +200,6 @@ var readFile = async function (file) {
 
 };
 module.exports = {
-    sleep2,sleep3,sleep4,sleep, fileExistsDiretorio, fileExistsFile, ziptoXmlPdf, compressGzip, compressPdf,
+    sleep2,sleep3,sleep4,sleep5,sleep, fileExistsDiretorio, fileExistsFile, ziptoXmlPdf, compressGzip, compressPdf,
     fileToBase64, stringToBase64, base64ToFile, fileExistsDiretorio, fileExistsFile, readFile, getPach, base64String
 };
