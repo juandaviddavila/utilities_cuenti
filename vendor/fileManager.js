@@ -5,7 +5,11 @@ const uuidv4 = require("uuid");
 const { shh } = require("shellsync");
 const { execSync } = require("child_process");
 //const gs = require('ghostscript4js');
-
+function sleep2(ms) {
+    return new Promise((resolve) => {
+        setTimeout(resolve, ms);
+    });
+};
 function sleep(ms) {
     return new Promise((resolve) => {
         setTimeout(resolve, ms);
@@ -181,6 +185,6 @@ var readFile = async function (file) {
 
 };
 module.exports = {
-    sleep, fileExistsDiretorio, fileExistsFile, ziptoXmlPdf, compressGzip, compressPdf,
+    sleep,sleep, fileExistsDiretorio, fileExistsFile, ziptoXmlPdf, compressGzip, compressPdf,
     fileToBase64, stringToBase64, base64ToFile, fileExistsDiretorio, fileExistsFile, readFile, getPach, base64String
 };
