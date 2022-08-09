@@ -1,9 +1,5 @@
 const AWS = require('aws-sdk');
-// import { ExecuteStatementCommand } from "@aws-sdk/client-dynamodb";
-// const { ExecuteStatementCommand } = require('aws-sdk').DynamoDB;
 const { DocumentClient } = require('aws-sdk').DynamoDB;
-//const { ExecuteStatementCommand } =require( "@aws-sdk/client-dynamodb");
-// import { ddbDocClient } from "../libs/ddbDocClient.js";
 
 const getDocumentClient = () => {
 	AWS.config.update({region:'us-west-2'});
@@ -76,7 +72,6 @@ const updateItem = async (tableName, key, update, values, attributes) => {
 };
 
 const deleteItem = async (tableName, key, conditionExpression, values) => {
-//	const dynamoDC = getDocumentClient();
 const dynamoDC = new AWS.DynamoDB(
 	{ apiVersion: "2012-08-10",region: "us-west-2"  });
 	return await dynamoDC
@@ -92,7 +87,7 @@ const dynamoDC = new AWS.DynamoDB(
 var getMongoDocument = async function (data) {
     try {
         const database = global.db;
-        const collection = database.collection("documents");
+        const collection = database.collection(data.bdName);
         const  result = await collection.findOne({'UUID': data.UUID});
         return result;
     } catch (error) {
@@ -101,4 +96,28 @@ var getMongoDocument = async function (data) {
     } 
 };
 
-module.exports = { send, saveItem, findScan, findQuery, updateItem, deleteItem, getMongoDocument };
+const saveItemMongo = async function (data) {
+    try {
+        const database = global.db;
+        const collection = database.collection(data.bdName);
+        const  result = await collection.insertOne(data);
+        return result;
+    } catch (error) {
+        console.error(error);
+        return null;
+    } 
+};
+
+const updateItemMongo = async function (data) {
+    try {
+        const database = global.db;
+        const collection = database.collection(data.bdName);
+        const  result = await collection.updateOne({'UUID': data.UUID}, {$set: data});
+        return result;
+    } catch (error) {
+        console.error(error);
+        return null;
+    } 
+};
+
+module.exports = { send, saveItem, findScan, findQuery, updateItem, deleteItem, getMongoDocument, saveItemMongo, updateItemMongo };
