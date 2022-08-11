@@ -15,7 +15,7 @@ var test = async function () {
     }
 };
 let printLog = function (str) {
-    console.log(moment().format('YYYY-DD-MM HH:mm:ss.SSS')+" "+str);
+    console.log(moment().format('YYYY-DD-MM HH:mm:ss.SSS') + " " + str);
 };
 let dateFormat = function () {
     return moment().format('MM/DD/YYYY HH:mm:ss.SSS');
@@ -63,6 +63,12 @@ var compressGzip = function (input) {
     let base64 = buffer.toString('base64');
     return base64;
 };
+var createMkdirCwd = async function (name) {
+    let rutaApp = process.cwd();
+    if (!fileExistsDiretorio(rutaApp + "/"+name+"/")) {
+        fs.mkdirSync(rutaApp+ "/"+name+"/");
+    }
+}
 var compressPdf = async function (base64Pdf) {
     let rutaApp = process.cwd();
     if (!fileExistsDiretorio(rutaApp + "/tem/")) {
@@ -160,9 +166,9 @@ var readFileToBase64 = function (file) {
     return fs.readFileSync(file, { encoding: 'base64' });
 };
 var readFileInput = function (file) {
-    return fs.readFileSync(file,null);
+    return fs.readFileSync(file, null);
 };
-var writerFileToBase64 = function (file,base64Data) {
+var writerFileToBase64 = function (file, base64Data) {
     fs.writeFileSync(file, base64Data, 'base64');
 };
 var generateRandom = function () {
@@ -170,8 +176,10 @@ var generateRandom = function () {
 }
 
 
-module.exports = {readFileInput,printLog,
-    writerFileToBase64,compressZip, readFileToBase64, generateRandom,
+module.exports = {
+    createMkdirCwd,
+    readFileInput, printLog,
+    writerFileToBase64, compressZip, readFileToBase64, generateRandom,
     sleep, fileExistsDiretorio, fileExistsFile, test, ziptoXmlPdf, compressGzip, compressPdf,
     fileToBase64, stringToBase64, base64ToFile, fileExistsDiretorio, fileExistsFile, readFile, getPach, base64String
 };
