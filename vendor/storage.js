@@ -86,14 +86,15 @@ const generateUrl = (fileKey) => {
 };
 var configS3 = function (accessKeyId, secretAccessKey) {
 	const AWS = require('aws-sdk');
-	if (process.env.accessKeyId !== undefined && process.env.secretAccessKey !== undefined) {
-		console.log("no ahi parametros s3 configurado en los secretos variables accessKeyId ysecretAccessKey ");
-	} else {
-		accessKeyId = rocess.env.accessKeyId;
-		secretAccessKey = process.env.secretAccessKey;
+	if(accessKeyId===undefined&&secretAccessKey===undefined){
+		accessKeyId=process.env.accessKeyId ;
+		secretAccessKey=process.env.secretAccessKey ;
 	}
+	if (accessKeyId === undefined &&secretAccessKey === undefined) {
+		console.log("no ahi parametros s3 configurado en los secretos variables accessKeyId ysecretAccessKey ");
+	} 
 	if (accessKeyId !== undefined && secretAccessKey !== undefined) {
-		AWS.config.update({ accessKeyId: process.env.accessKeyId, secretAccessKey: process.env.secretAccessKey });
+		AWS.config.update({ accessKeyId:accessKeyId, secretAccessKey: secretAccessKey });
 	}
 };
 configS3();

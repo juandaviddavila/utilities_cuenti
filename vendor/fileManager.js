@@ -65,8 +65,8 @@ var compressGzip = function (input) {
 };
 var createMkdirCwd = async function (name) {
     let rutaApp = process.cwd();
-    if (!fileExistsDiretorio(rutaApp + "/"+name+"/")) {
-        fs.mkdirSync(rutaApp+ "/"+name+"/");
+    if (!fileExistsDiretorio(rutaApp + "/" + name + "/")) {
+        fs.mkdirSync(rutaApp + "/" + name + "/");
     }
 }
 var compressPdf = async function (base64Pdf) {
@@ -166,7 +166,7 @@ var readFileToBase64 = function (file) {
     return fs.readFileSync(file, { encoding: 'base64' });
 };
 var readFileInput = function (file) {
-    return {content:fs.readFileSync(file, null)};
+    return { content: fs.readFileSync(file, null) };
 };
 var writerFileToBase64 = function (file, base64Data) {
     fs.writeFileSync(file, base64Data, 'base64');
@@ -174,21 +174,27 @@ var writerFileToBase64 = function (file, base64Data) {
 var generateRandom = function () {
     return uuidv4.v4();
 }
-var writerFileToString = function (file,str) {
-    fs.writeFileSync(file, str,'utf8');
+var writerFileToString = function (file, str) {
+    fs.writeFileSync(file, str, 'utf8');
 };
 
-var managerErrorApi=function(res,e){
+var managerErrorApi = function (res, e) {
     try {
         console.log("error:" + e);
         res.status(500);
         res.json({ status: 500, error: e.message });
     } catch (error) {
-        
+
     }
 };
-module.exports = {managerErrorApi,
-    createMkdirCwd,writerFileToString,
+var deleteFile = function (file) {
+    try {
+        fs.unlinkSync(file);
+    } catch (error) { }
+};
+module.exports = {
+    managerErrorApi,deleteFile,
+    createMkdirCwd, writerFileToString,
     readFileInput, printLog,
     writerFileToBase64, compressZip, readFileToBase64, generateRandom,
     sleep, fileExistsDiretorio, fileExistsFile, test, ziptoXmlPdf, compressGzip, compressPdf,
