@@ -174,10 +174,12 @@ var writerFileToBase64 = function (file, base64Data) {
 var generateRandom = function () {
     return uuidv4.v4();
 }
-
+var writerFileToString = function (file,str) {
+    fs.writeFileSync(file, str,'utf8');
+};
 
 module.exports = {
-    createMkdirCwd,
+    createMkdirCwd,writerFileToString,
     readFileInput, printLog,
     writerFileToBase64, compressZip, readFileToBase64, generateRandom,
     sleep, fileExistsDiretorio, fileExistsFile, test, ziptoXmlPdf, compressGzip, compressPdf,
