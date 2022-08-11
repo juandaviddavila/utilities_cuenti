@@ -166,7 +166,7 @@ var readFileToBase64 = function (file) {
     return fs.readFileSync(file, { encoding: 'base64' });
 };
 var readFileInput = function (file) {
-    return fs.readFileSync(file, null);
+    return {content:fs.readFileSync(file, null)};
 };
 var writerFileToBase64 = function (file, base64Data) {
     fs.writeFileSync(file, base64Data, 'base64');
