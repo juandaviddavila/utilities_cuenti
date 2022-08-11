@@ -1,6 +1,6 @@
 {
   "name": "utilities_cuenti",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -11,8 +11,10 @@
   "license": "ISC",
   "dependencies": {
     "adm-zip": "^0.5.9",
+    "axios": "^0.27.2",
     "child_process": "^1.0.2",
     "fs": "0.0.1-security",
+    "mongodb": "^4.8.1",
     "shellsync": "^0.2.2",
     "uuid": "^8.3.2",
     "zlib": "^1.0.5"
