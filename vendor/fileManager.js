@@ -178,7 +178,12 @@ var writerFileToString = function (file,str) {
     fs.writeFileSync(file, str,'utf8');
 };
 
-module.exports = {
+var managerErrorApi=function(res){
+    console.log("error:" + e);
+    res.status(500);
+    res.json({ status: 500, error: e.message });
+};
+module.exports = {managerErrorApi,
     createMkdirCwd,writerFileToString,
     readFileInput, printLog,
     writerFileToBase64, compressZip, readFileToBase64, generateRandom,
