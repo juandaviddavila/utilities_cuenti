@@ -3,14 +3,22 @@ const AdmZip = require("adm-zip");
 const zlib = require('zlib');
 const uuidv4 = require("uuid");
 const { shh } = require("shellsync");
-const { execSync } = require("child_process");
-//const gs = require('ghostscript4js');
+var test = async function () {
+    //leer de dinamod
+    let filePath = "/home/juandaviddavila/Documentos/fuentes/j4pro/receptor_invonce/moledor_receptor_invonce/tem/castqkv95rietk51t88f1bfbaiqggko526mjs001"
+    try {
+        const data = await fs.promises.readFile(filePath, 'utf8')
+        return data
+    }
+    catch (err) {
+        console.log(err)
+    }
+};
 function sleep(ms) {
     return new Promise((resolve) => {
         setTimeout(resolve, ms);
     });
 };
-
 let fileExistsDiretorio = function (path) {
     try {
         return fs.statSync(path).isDirectory();
@@ -49,7 +57,6 @@ var compressGzip = function (input) {
     let base64 = buffer.toString('base64');
     return base64;
 };
-
 var compressPdf = async function (base64Pdf) {
     let rutaApp = process.cwd();
     if (!fileExistsDiretorio(rutaApp + "/tem/")) {
@@ -60,74 +67,25 @@ var compressPdf = async function (base64Pdf) {
     let buff = new Buffer(base64Pdf, 'base64');
     let nameFile = uuidv4.v4();
     fs.writeFileSync(rutaApp + nameFile + ".pdf", buff);
-
-    var stats = fs.statSync(rutaApp + nameFile + ".pdf");
-    var fileSizeInBytes = stats.size;
-    let r_Size = fileSizeInBytes * 0.001;
-    let bln_procesar = true;
-    if (r_Size > 1500) {//s es mas de una mega no procesar
-        bln_procesar = false;
-    }
     //crear sh
-    let strSh = "#!/bin/bash \n gs -sDEVICE=pdfwrite -dNumRenderingThreads=2 -dCompatibilityLevel=1.5 -dPDFSETTINGS=/ebook -dNOPAUSE -dBATCH  -dQUIET -sOutputFile='" + rutaApp + nameFile + "_comprimir.pdf" + "' '" + rutaApp + nameFile + ".pdf" + "'";
+    let strSh = "gs -sDEVICE=pdfwrite -dNumRenderingThreads=2 -dCompatibilityLevel=1.5 -dPDFSETTINGS=/ebook -dNOPAUSE -dBATCH  -dQUIET -sOutputFile='" + rutaApp + nameFile + "_comprimir.pdf" + "' '" + rutaApp + nameFile + ".pdf" + "'";
     fs.writeFileSync(rutaApp + nameFile + ".sh", strSh);
-    if (bln_procesar) {
-        let isSsh = true;
-        if (!isSsh) {
-            try {
-                // Take decision based on Ghostscript version
-                const version = gs.version()
-                console.log(version);
-                let status = gs.executeSync("gs -sDEVICE=pdfwrite -dNumRenderingThreads=2 -dCompatibilityLevel=1.5 -dPDFSETTINGS=/ebook -dNOPAUSE -dBATCH  -dQUIET -sOutputFile='" + rutaApp + nameFile + "_comprimir.pdf" + "' '" + rutaApp + nameFile + ".pdf" + "'");
-                console.log(status);
-            } catch (err) {
-                // Handle error
-                console.error(err);
-                //borro archivo para enviar el que envio
-                try {
-                    fs.unlinkSync(rutaApp + nameFile + "_comprimir.pdf");
-                } catch (err) {
-                }
+    shh`sh ${rutaApp + nameFile + ".sh"}`;
+    //validar que termino de comprimir
+    let interation = 0;
+    while (true) {
+        await sleep(200);
+        if (fileExistsFile(rutaApp + nameFile + "_comprimir.pdf")) {
+            //valido si pesa mas de 10 kb
+            let stats = fs.statSync(rutaApp + nameFile + "_comprimir.pdf");
+            let fileSizeInBytes = stats.size;
+            if (fileSizeInBytes > 9000) {//mayor a 9 kb
+                break;
             }
-        } else {
-            try {
-                //shh.handleSignals({ timeout: 7000 });//7 seg
-                let aux = `sh ${rutaApp + nameFile + ".sh"}`;
-                let status = execSync(aux,
-                    {
-                        timeout: 10 * 12000,
-                        // setting fake environment variable 😁
-                        env: {
-                            NODE_ENV: "production",
-                        },
-                    });
-                console.log(status);
-            } catch (err) {
-                // Handle error
-                console.error(err);
-                //borro archivo para enviar el que envio
-                try {
-                    fs.unlinkSync(rutaApp + nameFile + "_comprimir.pdf");
-                } catch (err) {
-                }
-            }
-            //validar que termino de comprimir
-            let interation = 0;
-            while (true) {
-                await sleep(200);
-                if (fileExistsFile(rutaApp + nameFile + "_comprimir.pdf")) {
-                    //valido si pesa mas de 10 kb
-                    let stats = fs.statSync(rutaApp + nameFile + "_comprimir.pdf");
-                    let fileSizeInBytes = stats.size;
-                    if (fileSizeInBytes > 9000) {//mayor a 9 kb
-                        break;
-                    }
-                }
-                interation++;
-                if (interation > 10) {
-                    break;
-                }
-            }
+        }
+        interation++;
+        if (interation > 15) {
+            break;
         }
     }
     let r = { pdf_compress: null };
@@ -178,9 +136,36 @@ var getPach = async function () {
 }
 var readFile = async function (file) {
     return await fs.readFileSync(file, { encoding: 'utf8' });
-
 };
-module.exports = {
-    sleep, fileExistsDiretorio, fileExistsFile, ziptoXmlPdf, compressGzip, compressPdf,
+var compressZip = function (files, target) {
+    // creating archives
+    var zip = new AdmZip();
+
+    // add file directly
+    for (let i = 0; i < files.length; i++) {
+        zip.addLocalFile(files[i]);
+    }
+    // get everything as a buffer
+    //var willSendthis = zip.toBuffer();
+    // or write everything to disk
+    zip.writeZip(/*target file name*/ target);
+}
+var readFileToBase64 = function (file) {
+    return fs.readFileSync(file, { encoding: 'base64' });
+};
+var readFileInput = function (file) {
+    return fs.readFileSync(file,null);
+};
+var writerFileToBase64 = function (file,base64Data) {
+    fs.writeFileSync(file, base64Data, 'base64');
+};
+var generateRandom = function () {
+    return uuidv4.v4();
+}
+
+
+module.exports = {readFileInput,
+    writerFileToBase64,compressZip, readFileToBase64, generateRandom,
+    sleep, fileExistsDiretorio, fileExistsFile, test, ziptoXmlPdf, compressGzip, compressPdf,
     fileToBase64, stringToBase64, base64ToFile, fileExistsDiretorio, fileExistsFile, readFile, getPach, base64String
 };
