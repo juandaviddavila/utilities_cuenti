@@ -178,10 +178,14 @@ var writerFileToString = function (file,str) {
     fs.writeFileSync(file, str,'utf8');
 };
 
-var managerErrorApi=function(res){
-    console.log("error:" + e);
-    res.status(500);
-    res.json({ status: 500, error: e.message });
+var managerErrorApi=function(res,e){
+    try {
+        console.log("error:" + e);
+        res.status(500);
+        res.json({ status: 500, error: e.message });
+    } catch (error) {
+        
+    }
 };
 module.exports = {managerErrorApi,
     createMkdirCwd,writerFileToString,
