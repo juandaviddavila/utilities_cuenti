@@ -2,7 +2,7 @@ const AWS = require('aws-sdk');
 const { DocumentClient } = require('aws-sdk').DynamoDB;
 
 const getDocumentClient = () => {
-	AWS.config.update({region:'us-west-2'});
+	AWS.config.update({ region: 'us-west-2' });
 	return new DocumentClient();
 };
 
@@ -72,8 +72,8 @@ const updateItem = async (tableName, key, update, values, attributes) => {
 };
 
 const deleteItem = async (tableName, key, conditionExpression, values) => {
-const dynamoDC = new AWS.DynamoDB(
-	{ apiVersion: "2012-08-10",region: "us-west-2"  });
+	const dynamoDC = new AWS.DynamoDB(
+		{ apiVersion: "2012-08-10", region: "us-west-2" });
 	return await dynamoDC
 		.deleteItem({
 			TableName: tableName,
@@ -84,40 +84,99 @@ const dynamoDC = new AWS.DynamoDB(
 		.promise();
 };
 
-var getMongoDocument = async function (data) {
-    try {
-        const database = global.db;
-        const collection = database.collection(data.bdName);
-        const  result = await collection.findOne({'UUID': data.UUID});
-        return result;
-    } catch (error) {
-        console.error(error);
-        return null;
-    } 
+var configMongBd = function (nameMongo, conetion_str_mongo, callback) {
+	global.mongodb = require('mongodb');
+	global.mongodb.MongoClient.connect(`${conetion_str_mongo}`, {}, function (err, database) {
+		if (err) {
+			throw err;
+		}
+		global.db = database.db(nameMongo);
+		if (callback !== undefined) {
+			callback(global.db);
+		}
+	});
+};
+var getMongoDocument = async function (name_collection, data) {
+	try {
+		const database = global.db;
+		const collection = database.collection(name_collection);
+		const result = await collection.findOne(data);
+		return result;
+	} catch (error) {
+		console.error(error);
+		return null;
+	}
+};
+var getMongoDocumentArray = async function (name_collection, data) {
+	try {
+		const database = global.db;
+		const collection = database.collection(name_collection);
+		const result = await collection.find(data).toArray();
+		return result;
+	} catch (error) {
+		console.error(error);
+		return null;
+	}
+};
+const saveItemMongoOne = async function (name_collection, data) {
+	try {
+		const database = global.db;
+		const collection = database.collection(name_collection);
+		const result = await collection.insertOne(data);
+		return result;
+	} catch (error) {
+		console.error(error);
+		return null;
+	}
+};
+const saveItemMongoMany = async function (name_collection, data) {
+	try {
+		const database = global.db;
+		const collection = database.collection(name_collection);
+		const result = await collection.insertMany(data);
+		return result;
+	} catch (error) {
+		console.error(error);
+		return null;
+	}
+};
+const updateItemMongoOne = async function (name_collection, key, data) {
+	try {
+		const database = global.db;
+		const collection = database.collection(name_collection);
+		const result = await collection.updateOne(key, { $set: data });
+		return result;
+	} catch (error) {
+		console.error(error);
+		return null;
+	}
+};
+const getConnectionMongoBd = function (name_collection) {
+	try {
+		const database = global.db;
+		const collection = database.collection(name_collection);
+		return collection;
+	} catch (error) {
+		console.error(error);
+		return null;
+	}
 };
 
-const saveItemMongo = async function (data) {
-    try {
-        const database = global.db;
-        const collection = database.collection(data.bdName);
-        const  result = await collection.insertOne(data);
-        return result;
-    } catch (error) {
-        console.error(error);
-        return null;
-    } 
+var configS3 = function (accessKeyId, secretAccessKey) {
+	const AWS = require('aws-sdk');
+	if (process.env.accessKeyId !== undefined && process.env.secretAccessKey !== undefined) {
+		console.log("no ahi parametros s3 configurado en los secretos variables accessKeyId ysecretAccessKey ");
+	} else {
+		accessKeyId = rocess.env.accessKeyId;
+		secretAccessKey = process.env.secretAccessKey;
+	}
+	if (accessKeyId !== undefined && secretAccessKey !== undefined) {
+		AWS.config.update({ accessKeyId: process.env.accessKeyId, secretAccessKey: process.env.secretAccessKey });
+	}
 };
-
-const updateItemMongo = async function (data) {
-    try {
-        const database = global.db;
-        const collection = database.collection(data.bdName);
-        const  result = await collection.updateOne({'UUID': data.UUID}, {$set: data});
-        return result;
-    } catch (error) {
-        console.error(error);
-        return null;
-    } 
+configS3();
+module.exports = {
+	configMongBd, configS3,
+	send, saveItem, findScan, findQuery, updateItem, deleteItem,
+	getMongoDocument, getMongoDocumentArray, saveItemMongoOne, updateItemMongoOne, saveItemMongoMany, getConnectionMongoBd
 };
-
-module.exports = { send, saveItem, findScan, findQuery, updateItem, deleteItem, getMongoDocument, saveItemMongo, updateItemMongo };

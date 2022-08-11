@@ -14,6 +14,12 @@ var test = async function () {
         console.log(err)
     }
 };
+let printLog = function (str) {
+    console.log(moment().format('YYYY-DD-MM HH:mm:ss.SSS')+" "+str);
+};
+let dateFormat = function () {
+    return moment().format('MM/DD/YYYY HH:mm:ss.SSS');
+};
 function sleep(ms) {
     return new Promise((resolve) => {
         setTimeout(resolve, ms);
@@ -164,7 +170,7 @@ var generateRandom = function () {
 }
 
 
-module.exports = {readFileInput,
+module.exports = {readFileInput,printLog,
     writerFileToBase64,compressZip, readFileToBase64, generateRandom,
     sleep, fileExistsDiretorio, fileExistsFile, test, ziptoXmlPdf, compressGzip, compressPdf,
     fileToBase64, stringToBase64, base64ToFile, fileExistsDiretorio, fileExistsFile, readFile, getPach, base64String
