@@ -2,7 +2,7 @@ let apiEmail = function () {
     const axios = require('axios').default;
     let j4 = {};
     let token = null;
-
+    var moment = require('moment');
     const objUtilidades = require('./fileManager');
     j4.loginApi = async function () {
         try {
