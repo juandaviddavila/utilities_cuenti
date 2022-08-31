@@ -47,7 +47,7 @@ let apiEmail = function () {
                 }
             }
         }
-        return formatEmail;
+        return dataEmail;
     }
     j4.sendMailThread = async function (dataEmail) {
         try {
