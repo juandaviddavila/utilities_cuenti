@@ -47,6 +47,7 @@ let apiEmail = function () {
                 }
             }
         }
+        return formatEmail;
     }
     j4.sendMailThread = async function (dataEmail) {
         try {
@@ -85,7 +86,7 @@ let apiEmail = function () {
             await j4.loginApi();
             var config = {
                 method: 'post',
-                url: 'https://app.cuenti.com/api_node/v1/utilidades/sendMail',
+                url: 'https://app.cuenti.co/api_node/v1/utilidades/sendMail',
                 headers: {
                     'Content-Type': 'application/json',
                     'access-token': token.token
