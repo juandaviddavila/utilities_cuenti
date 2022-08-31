@@ -105,4 +105,4 @@ let apiEmail = function () {
         j4: j4
     };
 }();
-module.exports = controlApi.j4;
+module.exports = apiEmail.j4;
