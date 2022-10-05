@@ -1,6 +1,6 @@
 const AWS = require('aws-sdk');
 const { DocumentClient } = require('aws-sdk').DynamoDB;
-
+const ObjectId = require('mongodb').ObjectID;
 const getDocumentClient = () => {
 	AWS.config.update({ region: 'us-west-2' });
 	return new DocumentClient();
