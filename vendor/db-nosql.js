@@ -96,8 +96,29 @@ var configMongBd = function (nameMongo, conetion_str_mongo, callback) {
 		}
 	});
 };
+var getMongoDocumentFind = async function (name_collection, data) {
+	try {
+		for (const property in data) {
+			if (property === '_id') {
+				data[property] = ObjectId(data[property]);
+			}
+		}
+		const database = global.db;
+		const collection = database.collection(name_collection);
+		const result = await collection.find(data);
+		return result;
+	} catch (error) {
+		console.error(error);
+		return null;
+	}
+};
 var getMongoDocument = async function (name_collection, data) {
 	try {
+		for (const property in data) {
+			if (property === '_id') {
+				data[property] = ObjectId(data[property]);
+			}
+		}
 		const database = global.db;
 		const collection = database.collection(name_collection);
 		const result = await collection.findOne(data);
@@ -109,6 +130,11 @@ var getMongoDocument = async function (name_collection, data) {
 };
 var getMongoDocumentArray = async function (name_collection, data) {
 	try {
+		for (const property in data) {
+			if (property === '_id') {
+				data[property] = ObjectId(data[property]);
+			}
+		}
 		const database = global.db;
 		const collection = database.collection(name_collection);
 		const result = await collection.find(data).toArray();
@@ -120,6 +146,11 @@ var getMongoDocumentArray = async function (name_collection, data) {
 };
 const saveItemMongoOne = async function (name_collection, data) {
 	try {
+		for (const property in data) {
+			if (property === '_id') {
+				data[property] = ObjectId(data[property]);
+			}
+		}
 		const database = global.db;
 		const collection = database.collection(name_collection);
 		const result = await collection.insertOne(data);
@@ -142,6 +173,11 @@ const saveItemMongoMany = async function (name_collection, data) {
 };
 const updateItemMongoOne = async function (name_collection, key, data) {
 	try {
+		for (const property in data) {
+			if (property === '_id') {
+				data[property] = ObjectId(data[property]);
+			}
+		}
 		const database = global.db;
 		const collection = database.collection(name_collection);
 		const result = await collection.updateOne(key, { $set: data });
@@ -164,7 +200,7 @@ const getConnectionMongoBd = function (name_collection) {
 
 
 module.exports = {
-	configMongBd,
+	configMongBd,getMongoDocumentFind,
 	send, saveItem, findScan, findQuery, updateItem, deleteItem,
 	getMongoDocument, getMongoDocumentArray, saveItemMongoOne, updateItemMongoOne, saveItemMongoMany, getConnectionMongoBd
 };
