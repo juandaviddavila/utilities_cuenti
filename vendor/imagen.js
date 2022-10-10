@@ -4,6 +4,7 @@ let apiImagen = function () {
     let token = null;
     var moment = require('moment');
     const objUtilidades = require('./fileManager');
+    let fs = require('fs');
     j4.loginApi = async function () {
         try {
             if (token !== null) {
@@ -36,7 +37,7 @@ let apiImagen = function () {
             return false;
         }
     }
-    j4.optimizerImagen = async function (bits,quality,ancho,png) {
+    j4.optimizerImagenApi = async function (bits,quality,ancho,png) {
         try {
             await j4.loginApi();
             var config = {
@@ -60,6 +61,77 @@ let apiImagen = function () {
             // Handle Error Here
             console.error(err);
             return await null;
+        }
+    };
+    let fileExistsDiretorio = function (path) {
+        try {
+            return fs.statSync(path).isDirectory();
+        } catch (e) {
+            return false;
+        }
+    };
+    function getFilesizeInBytes(filename) {
+        var stats = fs.statSync(filename);
+        var fileSizeInBytes = stats["size"];
+        return fileSizeInBytes;
+    }
+    j4.optmizarImagen = async function (req, res) {
+        try {
+            /* RESIZE OPTIMIZE IMAGES */
+            const Jimp = require('jimp');
+            let quality = 70;
+            let ancho = 200;
+            if (req.body.quality !== undefined) {
+                quality = req.body.quality;
+            }
+            if (req.body.ancho !== undefined) {
+                ancho = req.body.ancho;
+            }
+            console.log(process.cwd());
+            var uuid = require('uuid');
+
+            if (!fileExistsDiretorio(process.cwd() + "/temp")) {
+                // shell.mkdir('-p', ruta_fija + '/msj_canal/' + objeto.canal);
+                fs.mkdirSync(process.cwd() + "/temp", true);
+            }
+            let nombreArchivo = uuid.v1() + "." + req.body.ext;
+            let rutaTemporal = process.cwd() + "/temp" + "/" + nombreArchivo;
+
+
+            var base64Data = req.body.bits.replace(/^data:image\/png;base64,/, "");
+
+            fs.writeFileSync(rutaTemporal, base64Data, 'base64');
+
+            module.exports = async (images, width, height = Jimp.AUTO, quality) => {
+                await Promise.all(
+                    images.map(async imgPath => {
+                        const image = await Jimp.read(imgPath);
+                        await image.resize(width, height);
+                        await image.quality(quality);
+                        await image.writeAsync(imgPath);
+                    })
+                );
+            };
+
+            const resizeOptimizeImages = require('resize-optimize-images');
+            // Set the options.
+            const options = {
+                images: [rutaTemporal],
+                width: ancho,
+                quality: quality
+            };
+            // Run the module.
+            let retrono = await resizeOptimizeImages(options);
+            //convertir file a base64
+            var bitmap = fs.readFileSync(rutaTemporal);
+            // convert binary data to base64 encoded string
+            let base64Retorno = new Buffer(bitmap).toString('base64');
+            let tamano = getFilesizeInBytes(rutaTemporal);
+            fs.unlinkSync(rutaTemporal);
+            res.json({ bits: base64Retorno, tamano: tamano });
+        } catch (exception) {
+            console.error(exception.message);
+            res.send(exception.toString());
         }
     };
     return {
