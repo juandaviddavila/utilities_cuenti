@@ -75,17 +75,17 @@ let apiImagen = function () {
         var fileSizeInBytes = stats["size"];
         return fileSizeInBytes;
     }
-    j4.optmizarImagen = async function (req, res) {
+    j4.optmizarImagen = async function (data) {
         try {
             /* RESIZE OPTIMIZE IMAGES */
             const Jimp = require('jimp');
             let quality = 70;
             let ancho = 200;
-            if (req.body.quality !== undefined) {
-                quality = req.body.quality;
+            if (data.quality !== undefined) {
+                quality = data.quality;
             }
-            if (req.body.ancho !== undefined) {
-                ancho = req.body.ancho;
+            if (data.ancho !== undefined) {
+                ancho = data.ancho;
             }
             console.log(process.cwd());
             var uuid = require('uuid');
@@ -94,11 +94,11 @@ let apiImagen = function () {
                 // shell.mkdir('-p', ruta_fija + '/msj_canal/' + objeto.canal);
                 fs.mkdirSync(process.cwd() + "/temp", true);
             }
-            let nombreArchivo = uuid.v1() + "." + req.body.ext;
+            let nombreArchivo = uuid.v1() + "." + data.ext;
             let rutaTemporal = process.cwd() + "/temp" + "/" + nombreArchivo;
 
 
-            var base64Data = req.body.bits.replace(/^data:image\/png;base64,/, "");
+            var base64Data = data.bits.replace(/^data:image\/png;base64,/, "");
 
             fs.writeFileSync(rutaTemporal, base64Data, 'base64');
 
@@ -128,10 +128,10 @@ let apiImagen = function () {
             let base64Retorno = new Buffer(bitmap).toString('base64');
             let tamano = getFilesizeInBytes(rutaTemporal);
             fs.unlinkSync(rutaTemporal);
-            res.json({ bits: base64Retorno, tamano: tamano });
+            return{type:1,message:"save", bits: base64Retorno, tamano: tamano };
         } catch (exception) {
             console.error(exception.message);
-            res.send(exception.toString());
+            return{type:1,message:exception.toString()};
         }
     };
     return {
