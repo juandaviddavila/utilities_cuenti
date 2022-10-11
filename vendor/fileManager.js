@@ -192,7 +192,15 @@ var deleteFile = function (file) {
         fs.unlinkSync(file);
     } catch (error) { }
 };
-module.exports = {
+function betweenRandom(min, max) {  
+    return Math.floor(
+      Math.random() * (max - min) + min
+    )
+  };
+  let copyObject = function (mainObj) {
+    return JSON.parse(JSON.stringify(mainObj));
+  };
+module.exports = {betweenRandom,copyObject,
     managerErrorApi,deleteFile,
     createMkdirCwd, writerFileToString,
     readFileInput, printLog,
