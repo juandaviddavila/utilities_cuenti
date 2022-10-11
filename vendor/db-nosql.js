@@ -197,10 +197,25 @@ const getConnectionMongoBd = function (name_collection) {
 		return null;
 	}
 };
-
+var deleteMongoOne = async function (name_collection, data) {
+	try {
+		for (const property in data) {
+			if (property === '_id') {
+				data[property] = ObjectId(data[property]);
+			}
+		}
+		const database = global.db;
+		const collection = database.collection(name_collection);
+		const result = await collection.deleteOne(data);
+		return result;
+	} catch (error) {
+		console.error(error);
+		return null;
+	}
+};
 
 module.exports = {
 	configMongBd,getMongoDocumentFind,
-	send, saveItem, findScan, findQuery, updateItem, deleteItem,
+	send, saveItem, findScan, findQuery, updateItem, deleteItem,deleteMongoOne,
 	getMongoDocument, getMongoDocumentArray, saveItemMongoOne, updateItemMongoOne, saveItemMongoMany, getConnectionMongoBd
 };
